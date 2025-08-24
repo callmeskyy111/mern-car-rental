@@ -1,6 +1,7 @@
 import Banner from "../components/Banner";
 import FeaturedSection from "../components/FeaturedSection";
 import Hero from "../components/Hero";
+import NewsLetter from "../components/NewsLetter";
 import Testimonial from "../components/Testimonial";
 
 export default function Home() {
@@ -10,6 +11,7 @@ export default function Home() {
       <FeaturedSection />
       <Banner/>
       <Testimonial/>
+      <NewsLetter/>
     </>
   );
 }
