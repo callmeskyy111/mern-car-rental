@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { assets, dummyCarData } from "../assets/assets";
+import Loader from "../components/Loader";
 
 export default function CarDetails() {
   const { id } = useParams();
@@ -62,7 +63,7 @@ export default function CarDetails() {
             {/* Description */}
             <div>
               <h1 className="text-xl font-medium mb-3">Description</h1>
-              <p className="text-gray-500">{CarDetails.description}</p>
+              <p className="text-gray-500">{car.description}</p>
             </div>
             {/* Features */}
             <div>
@@ -73,7 +74,7 @@ export default function CarDetails() {
                   "Bluetooth",
                   "GPS",
                   "Heated Seats",
-                  "Rear-View Mirrr",
+                  "Rear-View Mirror",
                 ].map((item) => (
                   <li key={item} className="flex items-center text-gray-500">
                     <img src={assets.check_icon} className="h-4 mr-2" />
@@ -89,6 +90,6 @@ export default function CarDetails() {
       </div>
     </div>
   ) : (
-    <p>Loading...</p>
+    <Loader/>
   );
 }
