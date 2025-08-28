@@ -37,7 +37,7 @@ export default function CarCard({ car }) {
               {car.brand} {car.model}
             </h3>
             <p className="text-muted-foreground text-sm">
-              {car.category} | {car.year}
+              {car.category} ▪️ {car.year}
             </p>
           </div>
         </div>
