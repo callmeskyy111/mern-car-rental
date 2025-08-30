@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { assets, dummyDashboardData } from "../../assets/assets";
-import Title from "../../components/Title";
+import Title from "../../components/dashboard/Title";
 
 function Dashboard() {
   const [data, setData] = useState({
