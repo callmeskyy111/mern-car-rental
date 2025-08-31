@@ -11,15 +11,17 @@ import Dashboard from "./pages/dashboard/Dashboard";
 import AddCar from "./pages/dashboard/AddCar";
 import ManageCars from "./pages/dashboard/ManageCars";
 import MangeBookings from "./pages/dashboard/MangeBookings";
+import Login from "./components/Login";
 
 export default function App() {
   const [showLogin, setShowLogin] = useState(false);
   const isOwnerPath = useLocation().pathname.startsWith("/owner");
   return (
     <>
+      {showLogin && <Login setShowLogin={setShowLogin} />}
       {!isOwnerPath && <Navbar setShowLogin={setShowLogin} />}
       <Routes>
-        {/* USER-ROUTES */}
+        {/* CUSTOMER/USER ROUTES */}
         <Route path="/" element={<Home />} />
         <Route path="/car-details/:id" element={<CarDetails />} />
         <Route path="/cars" element={<Cars />} />
