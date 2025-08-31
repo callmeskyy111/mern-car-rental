@@ -38,4 +38,4 @@ export default function App() {
   );
 }
 
-//todo: 03.34.20 - AddCar
+//todo: 04:18:01 // Manage Bookings (Dashboard)

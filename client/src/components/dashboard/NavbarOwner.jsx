@@ -8,7 +8,7 @@ export default function NavbarOwner() {
       <Link to="/">
         <img src={assets.logo} alt="logo" className="h-7" />
       </Link>
-      <p className="">Welcome {user.name || "Owner"}</p>
+      <p className="">Welcome, {user.name || "Owner"}</p>
     </div>
   );
 }
