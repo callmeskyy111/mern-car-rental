@@ -7,6 +7,8 @@ function generateToken(userId) {
   return jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: "7d" });
 }
 
+// 1️⃣ register-user
+
 export async function registerUser(req, res) {
   try {
     const { name, email, password } = req.body;
@@ -46,6 +48,48 @@ export async function registerUser(req, res) {
       success: true,
       token,
       message: "User registered successfully ✅",
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.json({ success: false, message: `🔴 ERROR: ${err.message}` });
+  }
+}
+
+// 2️⃣ login-user
+
+export async function loginUser(req, res) {
+  try {
+    const { email, password } = req.body;
+    const user = await UserModel.findOne({ email });
+    // if user is not found..
+    if (!user) {
+      return res.json({
+        success: false,
+        message: "Could not find the user! 🔴",
+      });
+    }
+
+    // if user is available, validate the password
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    // if password doesn't match..
+    if (!user) {
+      return res.json({
+        success: false,
+        message: "Invalid credentials! 🔴",
+      });
+    }
+
+    // if all ok, then send token to allow User-LOGIN
+
+    // Generate JWT
+    const token = generateToken(user._id.toString());
+
+    // Response
+    res.json({
+      success: true,
+      token,
+      message: "User Logged-In successfully ✅",
     });
   } catch (err) {
     console.error(err.message);
