@@ -3,6 +3,7 @@ import cors from "cors";
 import express from "express";
 import connectDB from "./configs/db.js";
 import userRouter from "./routes/User.routes.js";
+import ownerRouter from "./routes/Owner.routes.js";
 
 // Initialize express app
 const app = express();
@@ -22,7 +23,9 @@ app.get("/", (req, res) => {
 
 // Routes
 app.use("/api/user", userRouter);
+app.use("/api/owner", ownerRouter);
 
 app.listen(PORT, () => {
   console.log(`Server is running on PORT: ${PORT} ☑️`);
 });
+
