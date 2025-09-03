@@ -2,23 +2,24 @@ import UserModel from "../models/User.model.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
-//jwt generation f(x) for registerUser
+// JWT generation f(x)
 function generateToken(userId) {
-  const payload = userId;
-  return jwt.sign(payload, process.env.JWT_SECRET);
+  return jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: "7d" });
 }
 
 export async function registerUser(req, res) {
   try {
     const { name, email, password } = req.body;
-    //check for input
-    if (!name || !email || !password || !password.length < 8) {
+
+    // Validate input
+    if (!name || !email || !password || password.length < 8) {
       return res.json({
         success: false,
-        message: "Please fill all the fields properly! 🔴",
+        message: "Please fill all fields properly (password ≥ 8 chars)! 🔴",
       });
     }
-    //check whether user already exists
+
+    // Check for existing user
     const userExists = await UserModel.findOne({ email });
     if (userExists) {
       return res.json({
@@ -26,23 +27,28 @@ export async function registerUser(req, res) {
         message: "User already exists! 🔴",
       });
     }
-    //hash password - bcrypt
-    const hashedPassword = await bcrypt.hash(password, 10); // password and salt
 
-    //finally, create the user
-    const user = await UserModel.create({ name, email, hashedPassword });
+    // Hash password - Added security
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    //generate token - jwt
+    // Create user
+    const user = await UserModel.create({
+      name,
+      email,
+      password: hashedPassword,
+    });
+
+    // Generate JWT
     const token = generateToken(user._id.toString());
 
-    //gnerate a response upon successful registration
+    // Response
     res.json({
       success: true,
       token,
       message: "User registered successfully ✅",
     });
   } catch (err) {
-    console.log(err.message);
-    res.json({ success: false, message: `🔴ERROR: ${err.message}` });
+    console.error(err.message);
+    res.json({ success: false, message: `🔴 ERROR: ${err.message}` });
   }
 }
