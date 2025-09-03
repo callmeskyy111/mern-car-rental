@@ -69,11 +69,11 @@ export async function loginUser(req, res) {
       });
     }
 
-    // if user is available, validate the password
+    // validate the password
     const isMatch = await bcrypt.compare(password, user.password);
 
     // if password doesn't match..
-    if (!user) {
+    if (!isMatch) {
       return res.json({
         success: false,
         message: "Invalid credentials! 🔴",
@@ -91,6 +91,17 @@ export async function loginUser(req, res) {
       token,
       message: "User Logged-In successfully ✅",
     });
+  } catch (err) {
+    console.error(err.message);
+    res.json({ success: false, message: `🔴 ERROR: ${err.message}` });
+  }
+}
+
+// 3️⃣ GET user-data using JWT
+
+export async function getUserData(req, res) {
+  try {
+    const { user } = req;
   } catch (err) {
     console.error(err.message);
     res.json({ success: false, message: `🔴 ERROR: ${err.message}` });

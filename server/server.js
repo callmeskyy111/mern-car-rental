@@ -1,7 +1,8 @@
-import express from "express";
-import cors from "cors";
 import "dotenv/config";
+import cors from "cors";
+import express from "express";
 import connectDB from "./configs/db.js";
+import userRouter from "./routes/User.routes.js";
 
 // Initialize express app
 const app = express();
@@ -19,8 +20,9 @@ app.get("/", (req, res) => {
   res.send("Server is running ✅");
 });
 
+// Routes
+app.use("/api/user", userRouter);
+
 app.listen(PORT, () => {
   console.log(`Server is running on PORT: ${PORT} ☑️`);
 });
-
-// todo: 05:04:18
