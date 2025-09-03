@@ -3,8 +3,12 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
 // JWT generation f(x)
+// function generateToken(userId) {
+//   return jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: "7d" });
+// }
 function generateToken(userId) {
-  return jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: "7d" });
+  const payload = userId;
+  return jwt.sign(payload, process.env.JWT_SECRET);
 }
 
 // 1️⃣ register-user
@@ -104,7 +108,7 @@ export async function getUserData(req, res) {
     const { user } = req;
     res.json({ success: true, user });
   } catch (err) {
-    console.error(err.message);
+    console.log(`🔴 ERROR: ${err.message}`);
     res.json({ success: false, message: `🔴 ERROR: ${err.message}` });
   }
 }
