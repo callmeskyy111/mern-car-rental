@@ -102,6 +102,7 @@ export async function loginUser(req, res) {
 export async function getUserData(req, res) {
   try {
     const { user } = req;
+    res.json({ success: true, user });
   } catch (err) {
     console.error(err.message);
     res.json({ success: false, message: `🔴 ERROR: ${err.message}` });
