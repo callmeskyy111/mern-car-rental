@@ -4,6 +4,7 @@ import {
   addCar,
   changeRoleToOwner,
   deleteCar,
+  getDashboardData,
   getOwnerCars,
   toggleAvailability,
 } from "../controllers/Owner.controller.js";
@@ -17,5 +18,6 @@ ownerRouter.post("/add-car", upload.single("image"), protect, addCar);
 ownerRouter.get("/cars", protect, getOwnerCars);
 ownerRouter.post("/toggle-car", protect, toggleAvailability);
 ownerRouter.post("/delete-car", protect, deleteCar);
+ownerRouter.get("/dashboard", protect, getDashboardData);
 
 export default ownerRouter;

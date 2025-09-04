@@ -1,4 +1,5 @@
 import imagekit from "../configs/imageKit.js";
+import BookingModel from "../models/Booking.model.js";
 import CarModel from "../models/Car.models.js";
 import UserModel from "../models/User.model.js";
 import fs from "fs";
@@ -142,11 +143,40 @@ export async function getDashboardData(req, res) {
   const cars = CarModel.find({ owner: _id });
 
   //todo: BOOKING FUNCTIONALITY
+  const bookings = await BookingModel.find({ owner: _id })
+    .populate("car")
+    .sort({ createdAt: -1 });
+
+  const pendingBookings = await BookingModel.find({
+    owner: _id,
+    status: "pending",
+  });
+
+  const completedBookings = await BookingModel.find({
+    owner: _id,
+    status: "confirmed",
+  });
+
+  // calculate monthly revenue from bookings where status === "confirmed"
+  const monthlyRevenue = bookings
+    .slice()
+    .filter((booking) => booking.status === "confirmed")
+    .reduce((acc, booking) => acc + booking.price, 0);
+
+  // finally, create dashboard-data obj{}
+  const dashboardData = {
+    totalcars: (await cars).length,
+    totalBookings: bookings.length,
+    pendingBookings: pendingBookings.length,
+    completedBookings: completedBookings.length,
+    recentBookings: bookings.slice(0, 3),
+    monthlyRevenue,
+  };
 
   res.json({
     success: true,
     message: "Fetched Dashboard Data ✅",
-    cars,
+    dashboardData,
   });
 
   try {

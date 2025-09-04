@@ -25,7 +25,7 @@ app.get("/", (req, res) => {
 // Routes
 app.use("/api/user", userRouter);
 app.use("/api/owner", ownerRouter);
-app.use("/api/booking", bookingRouter);
+app.use("/api/bookings", bookingRouter);
 
 app.listen(PORT, () => {
   console.log(`Server is running on PORT: ${PORT} ☑️`);
