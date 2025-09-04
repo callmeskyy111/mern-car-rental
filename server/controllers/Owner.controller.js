@@ -130,56 +130,96 @@ export async function deleteCar(req, res) {
 
 // API to GET dashboard data
 export async function getDashboardData(req, res) {
-  const { _id, role } = req.user;
-
-  // check role
-  if (role !== "owner") {
-    return res.json({
-      success: false,
-      message: `🔴 Unauthorized!`,
-    });
-  }
-
-  const cars = CarModel.find({ owner: _id });
-
-  //todo: BOOKING FUNCTIONALITY
-  const bookings = await BookingModel.find({ owner: _id })
-    .populate("car")
-    .sort({ createdAt: -1 });
-
-  const pendingBookings = await BookingModel.find({
-    owner: _id,
-    status: "pending",
-  });
-
-  const completedBookings = await BookingModel.find({
-    owner: _id,
-    status: "confirmed",
-  });
-
-  // calculate monthly revenue from bookings where status === "confirmed"
-  const monthlyRevenue = bookings
-    .slice()
-    .filter((booking) => booking.status === "confirmed")
-    .reduce((acc, booking) => acc + booking.price, 0);
-
-  // finally, create dashboard-data obj{}
-  const dashboardData = {
-    totalcars: (await cars).length,
-    totalBookings: bookings.length,
-    pendingBookings: pendingBookings.length,
-    completedBookings: completedBookings.length,
-    recentBookings: bookings.slice(0, 3),
-    monthlyRevenue,
-  };
-
-  res.json({
-    success: true,
-    message: "Fetched Dashboard Data ✅",
-    dashboardData,
-  });
-
   try {
+    const { _id, role } = req.user;
+
+    // check role
+    if (role !== "owner") {
+      return res.json({
+        success: false,
+        message: `🔴 Unauthorized!`,
+      });
+    }
+
+    const cars = CarModel.find({ owner: _id });
+
+    const bookings = await BookingModel.find({ owner: _id })
+      .populate("car")
+      .sort({ createdAt: -1 });
+
+    const pendingBookings = await BookingModel.find({
+      owner: _id,
+      status: "pending",
+    });
+
+    const completedBookings = await BookingModel.find({
+      owner: _id,
+      status: "confirmed",
+    });
+
+    // calculate monthly revenue from bookings where status === "confirmed"
+    const monthlyRevenue = bookings
+      .slice()
+      .filter((booking) => booking.status === "confirmed")
+      .reduce((acc, booking) => acc + booking.price, 0);
+
+    // finally, create dashboard-data obj{}
+    const dashboardData = {
+      totalcars: (await cars).length,
+      totalBookings: bookings.length,
+      pendingBookings: pendingBookings.length,
+      completedBookings: completedBookings.length,
+      recentBookings: bookings.slice(0, 3),
+      monthlyRevenue,
+    };
+
+    res.json({
+      success: true,
+      message: "Fetched Dashboard Data ✅",
+      dashboardData,
+    });
+  } catch (err) {
+    console.log(`🔴 ERROR: ${err.message}`);
+    res.json({ success: false, message: `🔴 ERROR: ${err.message}` });
+  }
+}
+
+// API to update user-image
+export async function updateUserImage(req, res) {
+  try {
+    const { _id } = req.user;
+
+    const imageFile = req.file;
+
+    // Upload image to ImageKit
+    const fileBuffer = fs.readFileSync(imageFile.path);
+    const resp = await imagekit.upload({
+      file: fileBuffer,
+      fileName: imageFile.originalname,
+      folder: "/users",
+    });
+
+    // optimization
+    // For URL Generation, works for both images and videos
+    const optimizedImageURL = imagekit.url({
+      path: resp.filePath,
+      transformation: [
+        {
+          width: "400", // Width resizing
+        },
+        {
+          quality: "auto", // Auto Compression
+        },
+        {
+          format: "webp", // Convert to modern-format
+        },
+      ],
+    });
+
+    const image = optimizedImageURL;
+
+    await UserModel.findByIdAndUpdate(_id, { image });
+    res.json({ success: true, message: "Image updated ✅" });
   } catch (err) {
     console.log(`🔴 ERROR: ${err.message}`);
     res.json({ success: false, message: `🔴 ERROR: ${err.message}` });
