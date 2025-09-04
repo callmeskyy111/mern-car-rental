@@ -58,3 +58,100 @@ export async function addCar(req, res) {
     res.json({ success: false, message: `🔴 ERROR: ${err.message}` });
   }
 }
+
+// API to list owner cars
+export async function getOwnerCars(req, res) {
+  try {
+    const { _id } = req.user;
+    const cars = await CarModel.find({ owner: _id });
+    res.json({
+      success: true,
+      message: "Fetched list of cars by owner ✅",
+      cars,
+    });
+  } catch (err) {
+    console.log(`🔴 ERROR: ${err.message}`);
+    res.json({ success: false, message: `🔴 ERROR: ${err.message}` });
+  }
+}
+
+// API to toggle car-availability
+export async function toggleAvailability(req, res) {
+  try {
+    const { _id } = req.user;
+    const { carId } = req.body;
+    const car = await CarModel.findById(carId);
+
+    // checking whether car belongs to the user
+    if (car.owner.toString() !== _id.toString()) {
+      return res.json({ success: false, message: `🔴 Unauthorized!` });
+    }
+
+    car.isAvailable = !car.isAvailable;
+    await car.Save();
+
+    res.json({
+      success: true,
+      message: "Availability toggled ✅",
+    });
+  } catch (err) {
+    console.log(`🔴 ERROR: ${err.message}`);
+    res.json({ success: false, message: `🔴 ERROR: ${err.message}` });
+  }
+}
+
+// API to DELETE Car
+// remove ownership, as someone booking the car will be able to see it in their booking history
+export async function deleteCar(req, res) {
+  const { _id } = req.user;
+  const { carId } = req.body;
+  const car = await CarModel.findById(carId);
+
+  // checking whether car belongs to the user
+  if (car.owner.toString() !== _id.toString()) {
+    return res.json({ success: false, message: `🔴 Unauthorized!` });
+  }
+
+  car.owner = null;
+  await car.Save();
+
+  res.json({
+    success: true,
+    message: "Car removed ✅",
+  });
+
+  try {
+  } catch (err) {
+    console.log(`🔴 ERROR: ${err.message}`);
+    res.json({ success: false, message: `🔴 ERROR: ${err.message}` });
+  }
+}
+
+// API to GET dashboard data
+export async function getDashboardData(req, res) {
+  const { _id, role } = req.user;
+
+  // check role
+  if (role !== "owner") {
+    return res.json({
+      success: false,
+      message: `🔴 Unauthorized!`,
+    });
+  }
+
+  const cars = CarModel.find({ owner: _id });
+
+  //todo: BOOKING FUNCTIONALITY
+
+  res.json({
+    success: true,
+    message: "Fetched Dashboard Data ✅",
+    cars,
+  });
+
+  try {
+  } catch (err) {
+    console.log(`🔴 ERROR: ${err.message}`);
+    res.json({ success: false, message: `🔴 ERROR: ${err.message}` });
+  }
+}
