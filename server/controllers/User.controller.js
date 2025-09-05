@@ -1,6 +1,7 @@
 import UserModel from "../models/User.model.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import CarModel from "../models/Car.model.js";
 
 // JWT generation f(x)
 // function generateToken(userId) {
@@ -69,7 +70,7 @@ export async function loginUser(req, res) {
     if (!user) {
       return res.json({
         success: false,
-        message: "Could not find the user! 🔴",
+        message: "Could not find the user!",
       });
     }
 
@@ -80,7 +81,7 @@ export async function loginUser(req, res) {
     if (!isMatch) {
       return res.json({
         success: false,
-        message: "Invalid credentials! 🔴",
+        message: "Invalid credentials!",
       });
     }
 
@@ -107,6 +108,18 @@ export async function getUserData(req, res) {
   try {
     const { user } = req;
     res.json({ success: true, user });
+  } catch (err) {
+    console.log(`🔴 ERROR: ${err.message}`);
+    res.json({ success: false, message: `🔴 ERROR: ${err.message}` });
+  }
+}
+
+// 4️⃣ GET all cars for front-end
+
+export async function getCars(req, res) {
+  try {
+    const cars = await CarModel.find({ isAvailable: true });
+    res.json({ success: true, cars });
   } catch (err) {
     console.log(`🔴 ERROR: ${err.message}`);
     res.json({ success: false, message: `🔴 ERROR: ${err.message}` });

@@ -1,11 +1,29 @@
 import { useState } from "react";
 import { assets, menuLinks } from "../assets/assets";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { useAppContext } from "../context/AppContext";
+import toast from "react-hot-toast";
 
-export default function Navbar({ setShowLogin }) {
+export default function Navbar() {
   const location = useLocation();
   const [open, setOpen] = useState(false);
-  const navigate = useNavigate();
+  const { setShowLogin, navigate, user, logout, isOwner, axios, setIsOwner } =
+    useAppContext();
+
+  async function changeRole() {
+    try {
+      const { data } = await axios.post("/api/owner/change-role");
+      if (data.success) {
+        setIsOwner(true);
+        toast.success(data.message);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (err) {
+      console.log(err.message);
+      toast.error(err.message);
+    }
+  }
 
   return (
     <div
@@ -32,17 +50,23 @@ export default function Navbar({ setShowLogin }) {
           />
           <img src={assets.search_icon} alt="search" />
         </div>
+
         <div className="flex max-sm:flex-col  items-start sm:items-center gap-6">
-          <button onClick={() => navigate("/owner")} className="cursor-pointer">
-            Dashboard
+          <button
+            onClick={() => (isOwner ? navigate("/owner") : changeRole())}
+            className="cursor-pointer">
+            {isOwner ? "Dashboard" : "List cars"}
           </button>
           <button
-            onClick={() => setShowLogin(true)}
+            onClick={() => {
+              user ? logout() : setShowLogin(true);
+            }}
             className="cursor-pointer px-8 py-2 bg-primary hover:bg-primary-dull transition-all text-white rounded-lg">
-            Login
+            {user ? "Logout" : "Login"}
           </button>
         </div>
       </div>
+
       <button
         className="sm:hidden cursor-pointer"
         aria-label={open ? "Close Menu" : "Open Menu"}

@@ -1,15 +1,39 @@
 // Login Form
 
 import React from "react";
+import { useAppContext } from "../context/AppContext";
+import toast from "react-hot-toast";
 
-export default function Login({ setShowLogin }) {
+export default function Login() {
+  const { setShowLogin, axios, setToken, navigate } = useAppContext();
+
   const [state, setState] = React.useState("login");
   const [name, setName] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
 
   async function onSubmitHandler(evt) {
-    evt.preventDefault();
+    try {
+      evt.preventDefault();
+      const { data } = await axios.post(`/api/user/${state}`, {
+        name,
+        email,
+        password,
+      });
+      if (data.success) {
+        navigate("/");
+        setToken(data.token);
+        localStorage.setItem("token", data.token);
+        setShowLogin(false);
+        toast.success("You're Logged In!")
+      } else {
+        console.log(data.message);
+        toast.error(data.message);
+      }
+    } catch (err) {
+      console.log(err.message);
+      toast.error(err.message);
+    }
   }
 
   return (
