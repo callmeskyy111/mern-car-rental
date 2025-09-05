@@ -1,19 +1,66 @@
 import { useEffect, useState } from "react";
-import { assets, dummyCarData } from "../../assets/assets";
+import { assets } from "../../assets/assets";
 import Title from "../../components/dashboard/Title";
+import { useAppContext } from "../../context/AppContext";
+import toast from "react-hot-toast";
 
 export default function ManageCars() {
+  const { axios, isOwner, currency } = useAppContext();
+
   const [cars, setCars] = useState([]);
 
-  const currency = import.meta.env.VITE_CURRENCY;
-
   async function fetchOwnerCars() {
-    setCars(dummyCarData);
+    try {
+      const { data } = await axios.get("/api/owner/cars");
+      if (data.success) {
+        setCars(data.cars);
+      } else {
+        console.log(data.message);
+        toast.error(data.message);
+      }
+    } catch (err) {
+      console.log(err.message);
+      toast.error(err.message);
+    }
+  }
+
+  async function toggleAvailabilty(carId) {
+    try {
+      const { data } = await axios.post("/api/owner/toggle-car", { carId });
+      if (data.success) {
+        toast.success(data.message);
+        fetchOwnerCars();
+      } else {
+        console.log(data.message);
+        toast.error(data.message);
+      }
+    } catch (err) {
+      console.log(err.message);
+      toast.error(err.message);
+    }
+  }
+
+  async function deleteCar(carId) {
+    try {
+      const confirm = window.confirm("⚠️ Sure you wanna remove this car?"); // confirmation pop-up
+      if (!confirm) return null;
+      const { data } = await axios.post("/api/owner/delete-car", { carId });
+      if (data.success) {
+        toast.success(data.message);
+        fetchOwnerCars();
+      } else {
+        console.log(data.message);
+        toast.error(data.message);
+      }
+    } catch (err) {
+      console.log(err.message);
+      toast.error(err.message);
+    }
   }
 
   useEffect(() => {
-    fetchOwnerCars();
-  }, []);
+    isOwner && fetchOwnerCars();
+  }, [isOwner]);
 
   return (
     <div className="px-4 pt-10 md:px-10 w-full">
@@ -69,6 +116,7 @@ export default function ManageCars() {
                 </td>
                 <td className="p-3 flex items-center">
                   <img
+                    onClick={() => toggleAvailabilty(car._id)}
                     src={
                       car.isAvailable ? assets.eye_close_icon : assets.eye_icon
                     }
@@ -76,6 +124,7 @@ export default function ManageCars() {
                     className="cursor-pointer"
                   />
                   <img
+                    onClick={() => deleteCar(car._id)}
                     src={assets.delete_icon}
                     alt="delete-icon"
                     className="cursor-pointer"

@@ -114,17 +114,17 @@ export async function deleteCar(req, res) {
   }
 
   car.owner = null;
-  await car.Save();
+  await car.save();
 
   res.json({
     success: true,
-    message: "Car removed ✅",
+    message: "Car removed",
   });
 
   try {
   } catch (err) {
     console.log(`🔴 ERROR: ${err.message}`);
-    res.json({ success: false, message: `🔴 ERROR: ${err.message}` });
+    res.json({ success: false, message: `ERROR: ${err.message}` });
   }
 }
 
