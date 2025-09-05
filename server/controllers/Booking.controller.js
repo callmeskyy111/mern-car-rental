@@ -55,7 +55,7 @@ export async function createBooking(req, res) {
     }
 
     // If available, add car-data
-    const carData = CarModel.findById(car);
+    const carData = await CarModel.findById(car);
 
     // Calculate price based on pickup and return dates
     const picked = new Date(pickupDate);

@@ -1,8 +1,12 @@
 import { useState } from "react";
 import Title from "../../components/dashboard/Title";
 import { assets } from "../../assets/assets";
+import { useAppContext } from "../../context/AppContext";
+import toast from "react-hot-toast";
 
 export default function AddCar() {
+  const { axios, currency } = useAppContext();
+
   const [image, setImage] = useState(null);
   const [car, setCar] = useState({
     brand: "",
@@ -16,10 +20,41 @@ export default function AddCar() {
     description: "",
   });
 
-  const currency = import.meta.env.VITE_CURRENCY;
+  const [isLoading, setIsLoading] = useState(false);
 
   async function handleSubmit(evt) {
     evt.preventDefault();
+    if (isLoading) return null;
+    setIsLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append("image", image);
+      formData.append("carData", JSON.stringify(car));
+      const { data } = await axios.post("/api/owner/add-car", formData);
+      if (data.success) {
+        setImage(null);
+        setCar({
+          brand: "",
+          model: "",
+          year: 0,
+          pricePerDay: 0,
+          transmission: "",
+          fuel_type: "",
+          seating_capacity: 0,
+          location: "",
+          description: "",
+        });
+        toast.success(data.message);
+      } else {
+        console.log(data.message);
+        toast.error(data.message);
+      }
+    } catch (err) {
+      console.log(err.message);
+      toast.error(err.message);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -163,7 +198,7 @@ export default function AddCar() {
         </div>
         {/* Car Location */}
         <div className="flex flex-col w-full">
-          <label>Fuel Type</label>
+          <label>Location</label>
           <select
             className="px-3 py-2 mt-1 border border-borderColor rounded-md outline-none"
             value={car.location}
@@ -192,10 +227,9 @@ export default function AddCar() {
         </div>
         <button className="flex items-center gap-2 px-4 py-2.5 mt-4 hover:bg-primary-dull bg-primary text-white rounded-md font-medium w-max cursor-pointer">
           <img src={assets.tick_icon} alt="tick-icon" />
-          List Your Car
+          {isLoading ? "Listing.. ⌛":"List Your Car"}
         </button>
       </form>
     </div>
   );
 }
-

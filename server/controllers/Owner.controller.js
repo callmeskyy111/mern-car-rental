@@ -89,7 +89,7 @@ export async function toggleAvailability(req, res) {
     }
 
     car.isAvailable = !car.isAvailable;
-    await car.Save();
+    await car.save();
 
     res.json({
       success: true,
@@ -141,7 +141,7 @@ export async function getDashboardData(req, res) {
       });
     }
 
-    const cars = CarModel.find({ owner: _id });
+    const cars = await CarModel.find({ owner: _id });
 
     const bookings = await BookingModel.find({ owner: _id })
       .populate("car")
@@ -165,7 +165,7 @@ export async function getDashboardData(req, res) {
 
     // finally, create dashboard-data obj{}
     const dashboardData = {
-      totalcars: (await cars).length,
+      totalCars: (await cars).length,
       totalBookings: bookings.length,
       pendingBookings: pendingBookings.length,
       completedBookings: completedBookings.length,

@@ -1,16 +1,32 @@
 import { NavLink, useLocation } from "react-router-dom";
-import { assets, dummyUserData, ownerMenuLinks } from "../../assets/assets";
+import { assets, ownerMenuLinks } from "../../assets/assets";
 import { useState } from "react";
+import { useAppContext } from "../../context/AppContext";
+import toast from "react-hot-toast";
 
 export default function SideBar() {
-  const user = dummyUserData;
+  const { user, axios, fetchUser } = useAppContext();
   const location = useLocation();
 
   const [image, setImage] = useState("");
 
   async function updateImage() {
-    user.image = URL.createObjectURL(image);
-    setImage("");
+    // updating user-image from dashboard
+    try {
+      const formData = new FormData();
+      formData.append("image",image);
+      const { data } = await axios.post("/api/owner/update-image", formData);
+      if (data.success) {
+        fetchUser();
+        toast.success(data.message);
+        setImage("");
+      } else {
+        toast.error(data.message);
+      }
+    } catch (err) {
+      console.log(err.message);
+      toast.error(err.message);
+    }
   }
 
   return (
