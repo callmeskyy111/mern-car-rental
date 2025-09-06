@@ -1,23 +1,41 @@
-import React, { useEffect, useState } from "react";
-import { assets, dummyMyBookingsData } from "../assets/assets";
+import { useEffect, useState } from "react";
+import { assets } from "../assets/assets";
 import Title from "../components/Title";
+import { useAppContext } from "../context/AppContext";
+import toast from "react-hot-toast";
+import { motion } from "motion/react";
 
 export default function MyBookings() {
   const [bookings, setBookings] = useState([]);
 
-  const currency = import.meta.env.VITE_CURRENCY;
+  const { axios, currency, user } = useAppContext();
 
   const fetchMyBookings = async () => {
-    setBookings(dummyMyBookingsData);
+    try {
+      const { data } = await axios.get("/api/bookings/user");
+      if (data.success) {
+        setBookings(data.bookings);
+      } else {
+        console.log(data.message);
+        toast.err(data.message);
+      }
+    } catch (err) {
+      console.log(err.message);
+      toast.error(err.message);
+    }
   };
 
   // fetch whenever the page loads
   useEffect(() => {
-    fetchMyBookings();
-  }, []);
+    user && fetchMyBookings();
+  }, [user]);
 
   return (
-    <div className="px-6 md:px-16 lg:px-24 xl:px-32 2xl:px-48 mt-16 text-sm max-w-7xl">
+    <motion.div
+      initial={{ y: 30, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.6 }}
+      className="px-6 md:px-16 lg:px-24 xl:px-32 2xl:px-48 mt-16 text-sm max-w-7xl">
       <Title
         title="My Bookings"
         subTitle="View and manage all of your car-bookings."
@@ -25,7 +43,10 @@ export default function MyBookings() {
       />
       <div>
         {bookings.map((booking, idx) => (
-          <div
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.4, delay: idx * 0.1 }}
             key={booking._id}
             className="grid grid-cols-1 md:grid-cols-4 gap-6 p-6 border border-borderColor rounded-lg mt-5 first:mt-12">
             {/* Car Image + Info. */}
@@ -98,9 +119,9 @@ export default function MyBookings() {
                 <p>Booked On: {booking.createdAt.split("T")[0]}</p>
               </div>
             </div>
-          </div>
+          </motion.div>
         ))}
       </div>
-    </div>
+    </motion.div>
   );
 }

@@ -4,7 +4,7 @@ import CarModel from "../models/Car.model.js";
 export async function checkAvailability(car, pickupDate, returnDate) {
   const bookings = await BookingModel.find({
     car,
-    pickupDate: { $le: returnDate },
+    pickupDate: { $lte: returnDate },
     returnDate: { $gte: pickupDate },
   });
   return bookings.length === 0;
@@ -29,6 +29,7 @@ export async function checkAvailabilityOfCar(req, res) {
     });
     let availableCars = await Promise.all(availableCarsPromise);
     availableCars.filter((car) => car.isAvailable === true);
+    //availableCars = availableCars.filter((car) => car.isAvailable === true);
     res.json({
       success: true,
       message: "Fetched list of available cars ✅",

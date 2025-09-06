@@ -1,5 +1,6 @@
 import Title from "./Title";
 import { assets } from "../assets/assets";
+import { motion } from "motion/react";
 
 function Testimonial() {
   const testimonials = [
@@ -28,14 +29,18 @@ function Testimonial() {
   ];
 
   return (
-    <div className="py-28 px-6 md:px-16 lg:px-24 xl:px-44">
+    <div
+      className="py-28 px-6 md:px-16 lg:px-24 xl:px-44">
       <Title
         title="What Our Customers Say"
         subTitle="Discover why discerning car-fanatics from around the globe choose CarRental for meeting their expectations."
       />
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-18">
         {testimonials.map((testimonial, idx) => (
-          <div
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: idx * 0.2, ease: "easeOut" }}
             key={idx}
             className="bg-white p-6 rounded-xl shadow-lg hover:-translate-y-1 transition-all duration-500">
             <div className="flex items-center gap-3">
@@ -62,7 +67,7 @@ function Testimonial() {
             <p className="text-gray-500 max-w-90 mt-4 font-light">
               "{testimonial.testimonal}"
             </p>
-          </div>
+          </motion.div>
         ))}
       </div>
     </div>

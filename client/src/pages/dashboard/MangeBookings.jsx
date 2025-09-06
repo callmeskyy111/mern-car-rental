@@ -12,7 +12,7 @@ function MangeBookings() {
     try {
       const { data } = await axios.get("/api/bookings/owner");
       if (data.success) {
-        toast.success(data.message);
+        //toast.success(data.message);
         setBookings(data.bookings);
       } else {
         console.log(data.message);
@@ -31,7 +31,7 @@ function MangeBookings() {
         status,
       });
       if (data.success) {
-        toast.success(data.message);
+        //toast.success(data.message);
         fetchOwnerBookings();
       } else {
         console.log(data.message);
