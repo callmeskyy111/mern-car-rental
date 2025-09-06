@@ -55,10 +55,11 @@ This app provides a seamless experience for both **car owners** and **users**:
 <img width="941" height="475" alt="landing" src="https://github.com/user-attachments/assets/70f18a4e-d712-42e9-b8d2-934ce5db3ee4" />
 <img width="941" height="473" alt="landing-testimonial" src="https://github.com/user-attachments/assets/0493f34f-3651-40d7-82a2-0ab3621abee3" />
 <img width="941" height="471" alt="dashboard" src="https://github.com/user-attachments/assets/752939df-cd16-4916-89db-f6ca35f7405f" />
-<img width="917" height="473" alt="my-bookings" src="https://github.com/user-attachments/assets/6a57227a-5092-48ba-b87d-ee49d30fad8b" />
 <img width="941" height="470" alt="manage-bookings" src="https://github.com/user-attachments/assets/36338c66-8004-4a7d-84c8-9f2a8249d1c3" />
-<img width="650" height="440" alt="available-cars" src="https://github.com/user-attachments/assets/c5c5ad5d-9e0d-426a-8030-00dbf2ec4448" />
 <img width="929" height="434" alt="landing-contact-footer" src="https://github.com/user-attachments/assets/44c61795-846f-43c8-a06d-684329edab10" />
+<img width="917" height="473" alt="my-bookings" src="https://github.com/user-attachments/assets/6a57227a-5092-48ba-b87d-ee49d30fad8b" />
+<img width="650" height="440" alt="available-cars" src="https://github.com/user-attachments/assets/c5c5ad5d-9e0d-426a-8030-00dbf2ec4448" />
+
 
 
 
